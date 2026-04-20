@@ -1,15 +1,24 @@
 import streamlit as st
-import pickle
+import joblib
 import numpy as np
 
-with open('linear_regression_model.pkl', 'rb') as f:
-    model = pickle.load(f)
+# Load model
+model = joblib.load("model_result.pkl")
 
-st.title("💼 Salary Prediction App")
-st.write("Years of Experience daalo aur salary predict karo")
+# Debug (remove later)
+st.write("Model type:", type(model))
 
+# UI
 experience = st.slider("Years of Experience", 0, 20, 5)
 
 if st.button("Predict Salary"):
-    prediction = model.predict(np.array([[experience]]))
-    st.success(f"Predicted Salary: $ {prediction[0]:,.2f}")
+    try:
+        # Convert to proper format
+        exp_input = np.array([[float(experience)]])
+        
+        prediction = model.predict(exp_input)
+        
+        st.success(f"Predicted Salary: ₹{prediction[0]:,.2f}")
+    
+    except Exception as e:
+        st.error(f"Error: {e}")
